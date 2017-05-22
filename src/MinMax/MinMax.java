@@ -17,17 +17,17 @@ public class MinMax {
         int result = 0;
         if (maxPlayer) {
             result = Integer.MIN_VALUE;
-            for (Gomoku.Move move : problem.getMoves()) {
-                problem.move(move);
+            for (Node node : problem.getMoves()) {
+                problem.move(node);
                 result = Integer.max(result, minMax(depth - 1, !maxPlayer));
-                problem.back(move);
+                problem.back(node);
             }
         } else {
             result = Integer.MAX_VALUE;
-            for (Gomoku.Move move : problem.getMoves()) {
-                problem.move(move);
+            for (Node node : problem.getMoves()) {
+                problem.move(node);
                 result = Integer.min(result, minMax(depth - 1, !maxPlayer));
-                problem.back(move);
+                problem.back(node);
             }
         }
 

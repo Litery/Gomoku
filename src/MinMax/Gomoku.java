@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 class Gomoku {
 
-    ArrayList<ArrayList<Move>> board;
+    Integer[][] board;
 
     public Gomoku() {
-
+        board = new Integer[15][15];
     }
 
     int isWon() {
@@ -18,19 +18,19 @@ class Gomoku {
         return 0;
     }
 
-    ArrayList<Move> getMoves() {
-        return new ArrayList<Move>();
+    ArrayList<Node> getMoves() {
+        return new ArrayList<Node>();
     }
 
-    void move(Move move) {
-
-    }
-
-    void back(Move move) {
+    void move(Node node) {
 
     }
 
-    class Move {
+    void back(Node node) {
 
     }
+}
+
+class Node {
+
 }
