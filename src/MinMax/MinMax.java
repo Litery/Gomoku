@@ -7,26 +7,41 @@ public class MinMax {
         this.problem = problem;
     }
 
-    int minMax(int depth, boolean maxPlayer) {
+    Node chooseNode(int depth) {
+        float result = 0, tmp;
+        Node bestNode = null;
+        result = Float.MIN_VALUE;
+        for (Node node : problem.getMoves()) {
+            problem.move(node);
+            if ((tmp = minMax(depth - 1, false)) > result) {
+                result = tmp;
+                bestNode = node;
+            }
+            problem.back(node);
+        }
+        return bestNode;
+    }
+
+    float minMax(int depth, boolean maxPlayer) {
         if (problem.isWon() != 0) {
             return Integer.MIN_VALUE;
         } else if (depth == 0) {
             return problem.heuristicValue(maxPlayer);
         }
 
-        int result = 0;
+        float result = 0;
         if (maxPlayer) {
-            result = Integer.MIN_VALUE;
+            result = Float.MIN_VALUE;
             for (Node node : problem.getMoves()) {
                 problem.move(node);
-                result = Integer.max(result, minMax(depth - 1, !maxPlayer));
+                result = Float.max(result, minMax(depth - 1, !maxPlayer));
                 problem.back(node);
             }
         } else {
             result = Integer.MAX_VALUE;
             for (Node node : problem.getMoves()) {
                 problem.move(node);
-                result = Integer.min(result, minMax(depth - 1, !maxPlayer));
+                result = Float.min(result, minMax(depth - 1, !maxPlayer));
                 problem.back(node);
             }
         }
