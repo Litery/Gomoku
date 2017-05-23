@@ -75,34 +75,40 @@ class Gomoku {
         for (float[] color : players) {
             for (Node[][] board : board) {
                 for (Node[] row : board) {
-                    int space_counter = 0;
-                    int counter = -1;
-                    for (int j = 0; j < row.length; j++) {
-                        if (row[j].move == NO_MOVE) {
-                            space_counter += 1;
-                        } else if (row[j].move == color[0]) {
-                            counter += 1;
-                            space_counter += 1;
-                        } else if (space_counter >= 5 && counter > 1) {
-                            color[1] *= counter;
-                            space_counter = 0;
-                            counter = -1;
-                            ArrayUtils.print(row, WHITE, BLACK);
-                            System.out.println("in");
-                        } else {
-                            space_counter = 0;
-                            counter = -1;
-                        }
-                    }
-                    if (space_counter >= 5 && counter > 1) {
-                        color[1] *= counter;
-                        ArrayUtils.print(row, WHITE, BLACK);
-                        System.out.println("out");
+                    int j = 0;
+                    while (j < row.length - WIN_LENGTH + 1) {
+                        j = checkForward(row, color, j);
                     }
                 }
             }
         }
         return player ? players[0][1] / players[1][1] : players[1][1] / players[0][1];
+    }
+
+    private int checkForward(Node[] row, float[] color, int index) {
+        int result = 0, counter = -1;
+        for (int i = index; i >= 0 && i < index + WIN_LENGTH && i < row.length; i ++) {
+            if (row[i].move == color[0]) {
+                counter += 1;
+                if (result == 0 && i != index) {
+                    result = i;
+                }
+            } else if (row[i].move == -color[0]) {
+                result = i + 1;
+                if (counter > 1) {
+                    checkForward(row, color, i - WIN_LENGTH);
+                }
+                return result;
+            }
+        }
+        if (counter > 1) {
+            color[1] *= counter;
+            ArrayUtils.print(row, WHITE, BLACK);
+            System.out.println("out");
+        } else if (result == 0) {
+            result = index + WIN_LENGTH;
+        }
+        return result;
     }
 
     List<Node> getMoves() {
