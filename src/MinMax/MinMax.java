@@ -2,15 +2,17 @@ package MinMax;
 
 public class MinMax {
     Gomoku problem;
+    boolean player;
 
     public MinMax(Gomoku problem) {
         this.problem = problem;
     }
 
-    Node chooseNode(int depth) {
-        float result = 0, tmp;
+    Node chooseNode(int depth, boolean player) {
+        int result = 0, tmp;
         Node bestNode = null;
-        result = Float.MIN_VALUE;
+        this.player = player;
+        result = Integer.MIN_VALUE;
         for (Node node : problem.getMoves()) {
             problem.move(node);
             if ((tmp = minMax(depth - 1, false)) > result) {
@@ -18,31 +20,36 @@ public class MinMax {
                 bestNode = node;
             }
             problem.back(node);
+//            System.out.println(node.x + " " + node.y + " " + tmp);
         }
         return bestNode;
     }
 
-    float minMax(int depth, boolean maxPlayer) {
+    int minMax(int depth, boolean maxPlayer) {
         if (problem.isWon() != 0) {
             return Integer.MIN_VALUE;
         } else if (depth == 0) {
-            return problem.heuristicValue(maxPlayer);
+            return problem.heuristicValue(player);
         }
 
-        float result = 0;
+        int result = 0, tmp = 0;
         if (maxPlayer) {
-            result = Float.MIN_VALUE;
+            result = Integer.MIN_VALUE;
             for (Node node : problem.getMoves()) {
                 problem.move(node);
-                result = Float.max(result, minMax(depth - 1, !maxPlayer));
+                result = Integer.max(result, tmp = minMax(depth - 1, !maxPlayer));
                 problem.back(node);
+//                if (depth > 2)
+//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
             }
         } else {
             result = Integer.MAX_VALUE;
             for (Node node : problem.getMoves()) {
                 problem.move(node);
-                result = Float.min(result, minMax(depth - 1, !maxPlayer));
+                result = Integer.min(result, tmp = minMax(depth - 1, !maxPlayer));
                 problem.back(node);
+//                if (depth > 2)
+//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
             }
         }
 

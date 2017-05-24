@@ -10,7 +10,7 @@ class Gomoku {
     final int BLACK = -1;
     final int NO_MOVE = 0;
     final int WIN_LENGTH = 5;
-    final int BOARD_SIZE = 15;
+    final int BOARD_SIZE = 6;
 
     Node[][][] board = new Node[4][][];
     List<Node> expanded;
@@ -70,9 +70,9 @@ class Gomoku {
         return 0;
     }
 
-    float heuristicValue(boolean player) {
-        float[][] players = {{WHITE, 1}, {BLACK, 1}};
-        for (float[] color : players) {
+    int heuristicValue(boolean player) {
+        int[][] players = {{WHITE, 1}, {BLACK, 1}};
+        for (int[] color : players) {
             for (Node[][] board : board) {
                 for (Node[] row : board) {
                     int j = 0;
@@ -82,10 +82,10 @@ class Gomoku {
                 }
             }
         }
-        return player ? players[0][1] / players[1][1] : players[1][1] / players[0][1];
+        return player ? players[0][1] - 2 * players[1][1] : players[1][1] - 2 * players[0][1];
     }
 
-    private int checkForward(Node[] row, float[] color, int index) {
+    private int checkForward(Node[] row, int[] color, int index) {
         int result = 0, counter = -1;
         for (int i = index; i >= 0 && i < index + WIN_LENGTH && i < row.length; i ++) {
             if (row[i].move == color[0]) {
@@ -103,8 +103,6 @@ class Gomoku {
         }
         if (counter > 1) {
             color[1] *= counter;
-            ArrayUtils.print(row, WHITE, BLACK);
-            System.out.println("out");
         } else if (result == 0) {
             result = index + WIN_LENGTH;
         }
@@ -116,9 +114,14 @@ class Gomoku {
     }
 
     void move(int[] pos) {
-        board[0][pos[0]][pos[1]].move = white_player ? WHITE : BLACK;
+        move(pos[0], pos[1]);
+    }
+
+    void move(int x, int y) {
+        board[0][x][y].move = white_player ? WHITE : BLACK;
         white_player = !white_player;
     }
+
 
     void move(Node node) {
         node.move = white_player ? WHITE : BLACK;
