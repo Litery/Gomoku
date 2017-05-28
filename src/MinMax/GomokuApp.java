@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 public class GomokuApp extends Application {
     private static final int BOARD_SIZE = 15;
-    private static final float TILE_SIZE = 60f;
+    private static final float TILE_SIZE = 30f;
     private static final float PIECE_SIZE = 0.5f * TILE_SIZE;
     private static final float PREF_SIZE = BOARD_SIZE * TILE_SIZE;
 

@@ -35,7 +35,21 @@ public class Runner {
             if(gomoku.isWon() != 0) {
                 break;
             }
-            Node node = minMax.chooseNode(4, false);
+            Node node = minMax.chooseNode(3, false);
+            gomoku.move(node.x, node.y);
+            gomoku.print();
+        }
+    }
+
+    static void playProfile() {
+        Gomoku gomoku = new Gomoku();
+        MinMax minMax = new MinMax(gomoku);
+        int i = 0;
+        while (i++ < 4) {
+            int[] pos = {i, i};
+            gomoku.move(pos);
+            gomoku.print();
+            Node node = minMax.chooseNode(5, false);
             gomoku.move(node.x, node.y);
             gomoku.print();
         }
@@ -51,6 +65,6 @@ public class Runner {
 
 
     public static void main(String[] args) {
-        playMM();
+        playProfile();
     }
 }
