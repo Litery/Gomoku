@@ -20,7 +20,7 @@ class MinMax {
         int bestValue = Integer.MIN_VALUE, result;
         Node bestMove = null;
         for (Node node : problem.getMoves()) {
-            result = -negaMax(node, depth - 1, -player);
+            result = -negaMax(node, depth - 1, player);
             if (result > bestValue) {
                 bestValue = result;
                 bestMove = node;
@@ -32,15 +32,15 @@ class MinMax {
     private Node chooseMoveAlfaBeta(int depth, int player) {
         int bestValue = Integer.MIN_VALUE, result;
         Node bestMove = null;
-        for (Node node : problem.getMovesPrint()) {
+        for (Node node : problem.getMoves()) {
             result = -negaMax(node, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
-            System.out.println(node.x + " " + node.y + " " + result);
+//            System.out.println(node.x + " " + node.y + " " + result);
             if (result > bestValue) {
                 bestValue = result;
                 bestMove = node;
             }
         }
-        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
+//        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
         return bestMove;
     }
 
@@ -55,7 +55,7 @@ class MinMax {
         }
         if (depth == 0) {
             problem.back(move);
-            return problem.heuristicValue(player);
+            return -problem.heuristicValue(player);
         }
         int bestValue = Integer.MIN_VALUE;
         for (Node node : problem.getMoves()) {
@@ -70,11 +70,11 @@ class MinMax {
         int winningPlayer = problem.getWinningPlayer(move);
         if (winningPlayer != 0) {
             problem.back(move);
-            return (Integer.MIN_VALUE + 1) ;
+            return (Integer.MIN_VALUE + 1);
         }
         if (depth == 0) {
             problem.back(move);
-            return problem.heuristicValue(player);
+            return -problem.heuristicValue(player);
         }
         int bestValue = Integer.MIN_VALUE, result = 0;
         for (Node node : problem.getMoves()) {
