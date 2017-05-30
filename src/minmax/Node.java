@@ -24,4 +24,9 @@ class Node {
     private static int leftFiagonalRowIndex(int x, int y) {
         return y - x + (Gomoku.BOARD_SIZE - Gomoku.WIN_LENGTH);
     }
+
+    boolean isInCircle(Node node) {
+        return (node.x - x) * (node.x - x) + (node.y - y) * (node.y - y) <= 5;
+    }
+
 }

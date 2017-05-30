@@ -3,6 +3,7 @@ package minmax;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Gomoku {
     private Node[][][] board = new Node[4][][];
@@ -152,12 +153,28 @@ public class Gomoku {
     }
 
     List<Node> getMoves() {
+        List<Node> moves = expanded
+                .stream()
+                .filter(node -> node.move != 0)
+                .collect(Collectors.toList());
         return expanded.stream()
                 .filter(node -> node.move == 0)
-                .filter(window::isWithin)
+                .filter(node -> moves.stream().anyMatch(node::isInCircle))
                 .collect(Collectors.toList());
     }
 
+    List<Node> getMovesPrint() {
+        List<Node> moves = expanded
+                .stream()
+                .filter(node -> node.move != 0)
+                .collect(Collectors.toList());
+        for (Node node : moves)
+            System.out.println(node.x + " " + node.y);
+        return expanded.stream()
+                .filter(node -> node.move == 0)
+                .filter(node -> moves.stream().anyMatch(node::isInCircle))
+                .collect(Collectors.toList());
+    }
 
     void print() {
         ArrayUtils.print(board[0], WHITE, BLACK);
