@@ -20,26 +20,33 @@ class Game {
                 GomokuApp.setOnSquareClickListener(this::playerMove);
                 break;
             case AI_VS_PLAYER:
-                aiMove();
+                gomoku.move(7, 7);
+                GomokuApp.addPiece(player, 7, 7);
+                player = -player;
                 GomokuApp.setOnSquareClickListener(this::playerMove);
                 break;
             case AI_VS_AI:
-                aiVsAi(-1);
+                gomoku.move(7, 7);
+                GomokuApp.addPiece(player, 7, 7);
+                player = -player;
+                GomokuApp.setOnSquareClickListener((x, y) -> aiMove());
                 break;
         }
     }
 
     private void playerMove(int x, int y) {
         gomoku.move(x, y);
-        GomokuApp.addPiece(1, x, y);
+        GomokuApp.addPiece(player, x, y);
         checkWinCondition();
+        player = - player;
         aiMove();
     }
 
     private void aiMove() {
-        Node node = minMax.bestMove(3, -1, true);
+        Node node = minMax.bestMove(4, player, true);
         gomoku.move(node.x, node.y);
-        GomokuApp.addPiece(-1, node.x, node.y);
+        GomokuApp.addPiece(player, node.x, node.y);
+        player = -player;
         checkWinCondition();
     }
 
