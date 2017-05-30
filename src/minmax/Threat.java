@@ -3,7 +3,7 @@ package minmax;
 
 public class Threat {
     //types 0, 1, 2, 3 - rows, rdiag, ldiag, cols
-    protected int type, row, column, player, level;
+    private int type, row, column, player, level;
     public Threat(int type, int row, int column, int player, int level) {
         this.type = type;
         this.row = row;
@@ -12,7 +12,7 @@ public class Threat {
         this.level = level;
     }
 
-    public Threat(Threat t) {
+    Threat(Threat t) {
         this.type = t.type;
         this.row = t.row;
         this.column = t.column;

@@ -1,93 +1,52 @@
 package minmax;
 
-import minmax_v2.Node;
+import java.util.List;
 
-public class MinMax {
-    Gomoku problem;
-    int player;
+class MinMax {
+    private Gomoku problem;
 
-    public MinMax(Gomoku problem) {
+    MinMax(Gomoku problem) {
         this.problem = problem;
     }
 
-    Node chooseNode(int depth, int player) {
-        int result = Integer.MIN_VALUE, tmp;
-        Node bestNode = null;
-        this.player = player;
-        System.out.println(problem.getMoves().isEmpty());
+    Node bestMove(int depth, int player) {
+        int bestValue = Integer.MIN_VALUE, result;
+        Node bestMove = null;
+        printMoves(problem.getMoves());
         for (Node node : problem.getMoves()) {
-            problem.move(node);
-            if ((tmp = minMax(depth - 1, false)) > result) {
-                result = tmp;
-                bestNode = node;
+            result = -negaMax(node, depth - 1, -player);
+            if (result > bestValue) {
+                bestValue = result;
+                bestMove = node;
             }
-            problem.back(node);
-//            System.out.println(node.x + " " + node.y + " " + tmp);
         }
-        return bestNode;
+        return bestMove;
     }
 
-    int minMax(int depth, boolean isMaximizingPlayer) {
-        int winner = problem.getWinner();
-        if (winner != 0) {
-            return (20000);
-        } else if (depth == 0) {
+    private int negaMax(Node move, int depth, int player) {
+        problem.move(move);
+        int winningPlayer = problem.getWinningPlayer(move);
+        if (winningPlayer != 0) {
+            problem.back(move);
+            return Integer.MAX_VALUE;
+        }
+        if (depth == 0) {
+            problem.back(move);
             return problem.heuristicValue(player);
         }
-
-        int result = 0;
-        if (isMaximizingPlayer) {
-            result = Integer.MIN_VALUE;
-            for (Node node : problem.getMoves()) {
-                problem.move(node);
-                result = Integer.max(result, minMax(depth - 1, !isMaximizingPlayer));
-                problem.back(node);
-//                if (depth > 2)
-//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
-            }
-        } else {
-            result = Integer.MAX_VALUE;
-            for (Node node : problem.getMoves()) {
-                problem.move(node);
-                result = Integer.min(result, minMax(depth - 1, !isMaximizingPlayer));
-                problem.back(node);
-//                if (depth > 2)
-//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
-            }
+        int bestValue = Integer.MIN_VALUE;
+        for (Node node : problem.getMoves()) {
+            bestValue = Integer.max(bestValue, -negaMax(node, depth - 1, -player));
         }
-
-        return result;
+        problem.back(move);
+        return bestValue;
     }
 
-    int alfaBeta(int depth, boolean maxPlayer, int alfa, int beta) {
-        if (problem.getWinner() != 0) {
-            return Integer.MIN_VALUE;
-        } else if (depth == 0) {
-            return problem.heuristicValue(player);
+    private void printMoves(List<Node> moves) {
+        System.out.println();
+        for (Node node : moves) {
+            System.out.print("(" + node.x + ", " + node.y + "), ");
         }
-
-        int result = 0, tmp = 0;
-        if (maxPlayer) {
-            result = Integer.MIN_VALUE;
-            for (Node node : problem.getMoves()) {
-                problem.move(node);
-                result = Integer.max(result, tmp = minMax(depth - 1, !maxPlayer));
-                problem.back(node);
-//                if (depth > 2)
-//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
-            }
-        } else {
-            result = Integer.MAX_VALUE;
-            for (Node node : problem.getMoves()) {
-                problem.move(node);
-                result = Integer.min(result, tmp = minMax(depth - 1, !maxPlayer));
-                problem.back(node);
-//                if (depth > 2)
-//                    System.out.println("    " + node.x + " " + node.y + " " + node.move + " " + tmp);
-            }
-        }
-
-        return result;
+        System.out.println();
     }
-
 }
