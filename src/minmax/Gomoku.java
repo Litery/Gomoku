@@ -1,6 +1,7 @@
 package minmax;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -8,7 +9,6 @@ import java.util.stream.Stream;
 public class Gomoku {
     private Node[][][] board = new Node[4][][];
     private List<Node> expanded;
-    private Window window = new Window(5, 5, 5, 5);
     private boolean whitePlayer = true;
 
     public static final int WHITE = 1;
@@ -138,7 +138,6 @@ public class Gomoku {
 
     void move(Node node) {
         node.move = whitePlayer ? WHITE : BLACK;
-        window.widen(node.x, node.y);
         whitePlayer = !whitePlayer;
     }
 
@@ -148,7 +147,6 @@ public class Gomoku {
 
     void back(Node node) {
         node.move = 0;
-        window.narrow();
         whitePlayer = !whitePlayer;
     }
 
@@ -157,23 +155,12 @@ public class Gomoku {
                 .stream()
                 .filter(node -> node.move != 0)
                 .collect(Collectors.toList());
-        return expanded.stream()
+        List<Node> result =  expanded.stream()
                 .filter(node -> node.move == 0)
                 .filter(node -> moves.stream().anyMatch(node::isInCircle))
                 .collect(Collectors.toList());
-    }
-
-    List<Node> getMovesPrint() {
-        List<Node> moves = expanded
-                .stream()
-                .filter(node -> node.move != 0)
-                .collect(Collectors.toList());
-        for (Node node : moves)
-            System.out.println(node.x + " " + node.y);
-        return expanded.stream()
-                .filter(node -> node.move == 0)
-                .filter(node -> moves.stream().anyMatch(node::isInCircle))
-                .collect(Collectors.toList());
+        Collections.shuffle(result);
+        return result;
     }
 
     void print() {
