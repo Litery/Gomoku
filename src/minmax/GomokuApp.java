@@ -1,8 +1,12 @@
 package minmax;
 
+import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -22,6 +26,55 @@ public class GomokuApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static void showWinnerDialog(int player) {
+        String winner = (player == 1) ? "1" : "2";
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setContentText("Player " + winner + " wins!");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent()) {
+            showStartDialog();
+        }
+    }
+
+    public static void showStartDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setContentText("Choose your game mode");
+
+        ButtonType playerVsAiButton = new ButtonType("Player vs AI");
+        ButtonType aiVsPlayerButton = new ButtonType("AI vs Player");
+        ButtonType aiVsAiButton = new ButtonType("AI vs AI");
+        alert.getButtonTypes().setAll(playerVsAiButton, aiVsPlayerButton, aiVsAiButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        Game.Type gameType = null;
+        if (result.get() == playerVsAiButton) {
+            gameType = Game.Type.PLAYER_VS_AI;
+        } else if (result.get() == aiVsPlayerButton) {
+            gameType = Game.Type.AI_VS_PLAYER;
+        } else if (result.get() == aiVsAiButton) {
+            gameType = Game.Type.AI_VS_AI;
+        }
+        startNewGame(gameType);
+    }
+
+    private static void startNewGame(Game.Type gameType) {
+        clearBoard();
+        Game game = new Game(gameType);
+        game.start();
+    }
+
+    private static void clearBoard() {
+        pieceGroup.getChildren().clear();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = 0;
+            }
+        }
     }
 
     public static void addPiece(int player, int i, int j) {
@@ -44,7 +97,7 @@ public class GomokuApp extends Application {
         primaryStage.show();
         primaryStage.setResizable(false);
         createBoard(board);
-        Game game = new Game();
+        showStartDialog();
     }
 
     private static Pane createPane() {
