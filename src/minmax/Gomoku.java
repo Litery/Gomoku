@@ -24,6 +24,10 @@ public class Gomoku {
         expanded = ArrayUtils.expanded(board[0]);
     }
 
+    public Node getNode(int x, int y) {
+        return board[0][x][y];
+    }
+
     //check whole board for a winner
     int getWinningPlayer() {
         int result = 0;
@@ -38,23 +42,26 @@ public class Gomoku {
 
     //check winner after given move
     int getWinningPlayer(Node move) {
+//        System.out.println(move.x + " " + move.y);
         int result = checkContinuous(board[0][move.x]);
         int diagonal_row = 0;
         if (result == 0)
             result = checkContinuous(board[3][move.y]);
         diagonal_row = move.rightDiagonalRowIndex();
+//        System.out.println("rd" + diagonal_row);
         if (result == 0 && diagonal_row > 0 && diagonal_row < board[1].length)
             result = checkContinuous(board[1][diagonal_row]);
         diagonal_row = move.leftDiagonalRowIndex();
+//        System.out.println("ld" + diagonal_row);
         if (result == 0 && diagonal_row > 0 && diagonal_row < board[2].length)
-            result = checkContinuous(board[1][diagonal_row]);
+            result = checkContinuous(board[2][diagonal_row]);
         return result;
     }
 
     //find 5 consecutive moves in any color on whole board
     private int checkContinuous(Node[][] array) {
         int result = 0;
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length && result == 0; i++) {
             result = checkContinuous(array[i]);
         }
         return result;
@@ -67,11 +74,13 @@ public class Gomoku {
         for (int j = 0; j < row.length; j++) {
             if (row[j].move == WHITE) {
                 white++;
+                black = 0;
             } else if (row[j].move == BLACK) {
                 black++;
-            } else {
                 white = 0;
+            } else {
                 black = 0;
+                white = 0;
             }
             if (white == 5) {
                 return WHITE;
@@ -83,18 +92,21 @@ public class Gomoku {
     }
 
     int heuristicValue(int player) {
-        int[][] players = {{WHITE, 1}, {BLACK, 1}};
+        int[][] players = {{WHITE, 0}, {BLACK, 0}};
         for (int[] color : players) {
             for (Node[][] board : board) {
                 for (Node[] row : board) {
                     int j = 0;
                     while (j < row.length - WIN_LENGTH + 1) {
-                        j = checkForward(row, color, j);
+                        checkForward(row, color, j);
+                        j++;
                     }
                 }
             }
         }
-        return player == 1 ? players[0][1] - 2 * players[1][1] : players[1][1] - 2 * players[0][1];
+//        System.out.println(players[0][1]);
+//        System.out.println(players[1][1]);
+        return (player == 1) ? ((players[0][1]) - (players[1][1])) : ((players[1][1]) - (players[0][1]));
     }
 
     private int checkForward(Node[] row, int[] color, int index) {
@@ -108,13 +120,15 @@ public class Gomoku {
             } else if (row[i].move == -color[0]) {
                 result = i + 1;
                 if (counter > 1) {
-                    checkForward(row, color, i - WIN_LENGTH);
+                    //checkForward(row, color, i - WIN_LENGTH);
                 }
                 return result;
             }
         }
-        if (counter > 1) {
-            color[1] *= counter;
+        if (counter == 2) {
+            color[1] += counter;
+        } else if (counter == 3) {
+            color[1] += 5;
         } else if (result == 0) {
             result = index + WIN_LENGTH;
         }
