@@ -1,12 +1,14 @@
-package MinMax;
+package minmax;
 
+
+import minmax_v2.Node;
 
 import java.util.ArrayList;
 
-class ArrayUtils {
+public class ArrayUtils {
 
     //only works for square arrays
-    static Node[][] rightDiagonals(Node[][] array, int min_length) {
+    public static Node[][] rightDiagonals(Node[][] array, int min_length) {
         ArrayList<ArrayList<Node>> result = new ArrayList<>();
         ArrayList<Node> row;
         for (int i = min_length - 1; i < array.length; i++) {
@@ -38,7 +40,7 @@ class ArrayUtils {
     }
 
     //only works for square arrays
-    static Node[][] leftDiagonals(Node[][] array, int min_length) {
+    public static Node[][] leftDiagonals(Node[][] array, int min_length) {
         ArrayList<ArrayList<Node>> result = new ArrayList<>();
         ArrayList<Node> row;
         for (int i = array.length - min_length; i > 0; i--) {
@@ -69,7 +71,7 @@ class ArrayUtils {
         return result_array;
     }
 
-    static Node[][] transposed(Node[][] array) {
+    public static Node[][] transposed(Node[][] array) {
         Node[][] result = new Node[array.length][array.length];
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array.length; j++) {
@@ -79,7 +81,7 @@ class ArrayUtils {
         return result;
     }
 
-    static ArrayList<Node> expanded(Node[][] array) {
+    public static ArrayList<Node> expanded(Node[][] array) {
         ArrayList<Node> result = new ArrayList<>(array.length * array.length);
         int x = 0;
         for (int i = 0; i < array.length; i++) {
@@ -90,7 +92,7 @@ class ArrayUtils {
         return result;
     }
 
-    static void print(Node[][] array, int white, int black) {
+    public static void print(Node[][] array, int white, int black) {
         for (Node[] row : array) {
             System.out.println();
             for (Node node : row) {
@@ -102,7 +104,7 @@ class ArrayUtils {
         System.out.println();
     }
 
-    static void print(Node[] row, int white, int black) {
+    public static void print(Node[] row, int white, int black) {
         System.out.println();
         for (Node node : row) {
             System.out.print(node.move == white ? "X" : "");
@@ -112,7 +114,7 @@ class ArrayUtils {
         System.out.println();
     }
 
-    static Node[][] emptyBoard(int size) {
+    public static Node[][] emptyBoard(int size) {
         Node[][] result = new Node[size][size];
         int x = -1;
         for (int i = 0; i < size; i++) {

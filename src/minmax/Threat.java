@@ -1,4 +1,4 @@
-package MinMax;
+package minmax;
 
 
 public class Threat {

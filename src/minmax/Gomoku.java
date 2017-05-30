@@ -1,7 +1,7 @@
-package MinMax;
+package minmax;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import minmax_v2.Node;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,7 +10,7 @@ class Gomoku {
     final int BLACK = -1;
     final int NO_MOVE = 0;
     final int WIN_LENGTH = 5;
-    final int BOARD_SIZE = 6;
+    final int BOARD_SIZE = 15;
 
     Node[][][] board = new Node[4][][];
     List<Node> expanded;
@@ -25,7 +25,7 @@ class Gomoku {
         expanded = ArrayUtils.expanded(board[0]);
     }
 
-    int isWon() {
+    int getWinner() {
         int result = 0;
         for (Node[][] array : board) {
             result = checkContinuous(array);
@@ -70,7 +70,7 @@ class Gomoku {
         return 0;
     }
 
-    int heuristicValue(boolean player) {
+    int heuristicValue(int player) {
         int[][] players = {{WHITE, 1}, {BLACK, 1}};
         for (int[] color : players) {
             for (Node[][] board : board) {
@@ -82,31 +82,31 @@ class Gomoku {
                 }
             }
         }
-        return player ? players[0][1] - 2 * players[1][1] : players[1][1] - 2 * players[0][1];
+        return player == 1 ? players[0][1] - players[1][1] : players[1][1] - players[0][1];
     }
 
-    private int checkForward(Node[] row, int[] color, int index) {
-        int result = 0, counter = -1;
-        for (int i = index; i >= 0 && i < index + WIN_LENGTH && i < row.length; i ++) {
-            if (row[i].move == color[0]) {
+    private int checkForward(Node[] row, int[] player, int startIndex) {
+        int nextToCheck = 0, counter = -1;
+        for (int i = startIndex; i >= 0 && i < startIndex + WIN_LENGTH && i < row.length; i ++) {
+            if (row[i].move == player[0]) {
                 counter += 1;
-                if (result == 0 && i != index) {
-                    result = i;
+                if (nextToCheck == 0 && i != startIndex) {
+                    nextToCheck = i;
                 }
-            } else if (row[i].move == -color[0]) {
-                result = i + 1;
+            } else if (row[i].move == -player[0]) {
+                nextToCheck = i + 1;
                 if (counter > 1) {
-                    checkForward(row, color, i - WIN_LENGTH);
+                    checkForward(row, player, i - WIN_LENGTH);
                 }
-                return result;
+                return nextToCheck;
             }
         }
         if (counter > 1) {
-            color[1] *= counter;
-        } else if (result == 0) {
-            result = index + WIN_LENGTH;
+            player[1] *= counter;
+        } else if (nextToCheck == 0) {
+            nextToCheck = startIndex + WIN_LENGTH;
         }
-        return result;
+        return nextToCheck;
     }
 
     List<Node> getMoves() {
@@ -131,14 +131,5 @@ class Gomoku {
     void back(Node node) {
         node.move = NO_MOVE;
         white_player = !white_player;
-    }
-}
-
-class Node {
-    int move = 0, x, y;
-
-    Node(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 }

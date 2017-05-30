@@ -1,4 +1,4 @@
-package MinMax;
+package minmax;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -44,6 +44,7 @@ public class GomokuApp extends Application {
         primaryStage.show();
         primaryStage.setResizable(false);
         createBoard(board);
+        Game game = new Game();
     }
 
     private static Pane createPane() {
@@ -77,7 +78,6 @@ public class GomokuApp extends Application {
             setOnMouseClicked(event -> {
                 if (onSquareClickListener != null && board[x][y] == 0) {
                     onSquareClickListener.onSquareClick(x, y);
-                    addPiece(1, x, y);
                 }
             });
         }

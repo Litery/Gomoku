@@ -1,7 +1,6 @@
-package MinMax;
+package minmax;
 
 import java.util.HashSet;
-import java.util.stream.Stream;
 
 public class GomokuState {
     HashSet<Threat> threats = new HashSet<Threat>();
@@ -19,6 +18,8 @@ public class GomokuState {
         this.x_min = gs.x_min;
         this.y_max = gs.y_max;
         this.y_min = gs.y_min;
-        gs.threats.stream().map( threat -> this.threats.add(new Threat(threat)));
+        gs.threats.stream()
+                .map(Threat::new)
+                .forEach(threats::add);
     }
 }
