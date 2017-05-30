@@ -14,7 +14,7 @@ class Node {
     }
 
     private static int rightDiagonalRowIndex(int x, int y) {
-        return x + y - Gomoku.WIN_LENGTH;
+        return x + y - Gomoku.WIN_LENGTH + 1;
     }
 
     int leftDiagonalRowIndex() {
@@ -22,6 +22,6 @@ class Node {
     }
 
     private static int leftFiagonalRowIndex(int x, int y) {
-        return y - x + Gomoku.BOARD_SIZE;
+        return y - x + (Gomoku.BOARD_SIZE - Gomoku.WIN_LENGTH);
     }
 }
