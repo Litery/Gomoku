@@ -21,7 +21,7 @@ public class Runner {
             if(gomoku.getWinningPlayer() != 0) {
                 break;
             }
-            Node node = minMax.bestMove(3, -1, true);
+            Node node = minMax.bestMove(-1);
             gomoku.move(node);
             gomoku.print();
         }
