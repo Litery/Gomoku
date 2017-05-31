@@ -26,7 +26,7 @@ class Node {
     }
 
     boolean isInCircle(Node node) {
-        return (node.x - x) * (node.x - x) + (node.y - y) * (node.y - y) <= 5;
+        return (node.x - x) * (node.x - x) + (node.y - y) * (node.y - y) <= 3;
     }
 
 }
