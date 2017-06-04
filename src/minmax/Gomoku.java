@@ -1,6 +1,7 @@
 package minmax;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,16 +44,11 @@ public class Gomoku {
 
     //check winner after given move
     int getWinningPlayer(Node move) {
-        int result = checkContinuous(board[0][move.x]);
-        int diagonal_row = 0;
-        if (result == 0)
-            result = checkContinuous(board[3][move.y]);
-        diagonal_row = move.rightDiagonalRowIndex();
-        if (result == 0 && diagonal_row > 0 && diagonal_row < board[1].length)
-            result = checkContinuous(board[1][diagonal_row]);
-        diagonal_row = move.leftDiagonalRowIndex();
-        if (result == 0 && diagonal_row > 0 && diagonal_row < board[2].length)
-            result = checkContinuous(board[2][diagonal_row]);
+        int result = 0;
+        for(Node[] row : getAffectingRows(move)) {
+            result = checkContinuous(row);
+            if (result != 0) break;
+        }
         return result;
     }
 
@@ -89,50 +85,61 @@ public class Gomoku {
         return 0;
     }
 
-    private int[] heuristicValues(int player) {
-        int[][] players = {{WHITE, 0}, {BLACK, 0}};
-        for (int[] color : players) {
-            for (Node[][] board : board) {
-                for (Node[] row : board) {
-                    int j = 0;
-                    while (j < row.length - WIN_LENGTH + 1) {
-                        checkForward(row, color, j);
-                        j++;
-                    }
+    public ArrayList<Node> evaluateThreats(Node move) {
+        ArrayList<Node> oldThreats = new ArrayList<>();
+        int threatValue = 0;
+        for (Node[] row : getAffectingRows(move)) {
+            for (int i = 0; i < row.length - Gomoku.WIN_LENGTH + 1; i ++) {
+                threatValue = checkThreat(row, i);
+                if (threatValue != row[i].threat) {
+                    Node old = new Node(row[i]);
+                    oldThreats.add(old);
+                    row[i].threat = threatValue;
                 }
             }
         }
-        return new int[]{players[0][1], players[1][1]};
+        return oldThreats;
+    }
+
+    public void backThreats(ArrayList<Node> oldThreats) {
+        for (Node node : oldThreats) {
+            board[0][node.x][node.y].threat = node.threat;
+        }
     }
 
     int heuristicValue(int player) {
-        int[] values = heuristicValues(player);
-        return (player == WHITE) ? ((values[0]) - (values[1])) : ((values[1]) - (values[0]));
+        return player * expanded.stream().mapToInt(Node::getThreat).sum();
     }
 
-    private int checkForward(Node[] row, int[] color, int index) {
-        int result = 0, counter = -1;
-        for (int i = index; i >= 0 && i < index + WIN_LENGTH && i < row.length; i++) {
-            if (row[i].move == color[0]) {
-                counter += 1;
-                if (result == 0 && i != index) {
-                    result = i;
-                }
-            } else if (row[i].move == -color[0]) {
-                result = i + 1;
-                if (counter > 1) {
-                    //checkForward(row, color, i - WIN_LENGTH);
-                }
-                return result;
-            }
+    private int checkThreat(Node[] row, int index) {
+        int result = 0, black = 0, white = 0;
+        for (int i = index; i < Gomoku.WIN_LENGTH; i++) {
+            if (row[i].move == WHITE)
+                white++;
+            else if (row[i].move == BLACK)
+                black--;
+            if (black != 0 && white!= 0)
+                return 0;
         }
-        if (counter == 2) {
-            color[1] += counter;
-        } else if (counter == 3) {
-            color[1] += 5;
-        } else if (result == 0) {
-            result = index + WIN_LENGTH;
+        if (white > 2) {
+            result = white;
+        } else if (black < 2) {
+            result = black;
         }
+        return result;
+    }
+
+    private ArrayList<Node[]> getAffectingRows(Node node) {
+        int diagonalIndex = 0;
+        ArrayList<Node[]> result = new ArrayList<>();
+        result.add(board[0][node.x]);
+        result.add(board[3][node.y]);
+        diagonalIndex = node.rightDiagonalRowIndex();
+        if (diagonalIndex > 0 && diagonalIndex < board[1].length)
+            result.add(board[1][diagonalIndex]);
+        diagonalIndex = node.leftDiagonalRowIndex();
+        if (diagonalIndex > 0 && diagonalIndex < board[2].length)
+            result.add(board[2][diagonalIndex]);
         return result;
     }
 

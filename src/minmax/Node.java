@@ -2,11 +2,30 @@ package minmax;
 
 
 class Node {
-    int move = 0, x, y;
+    int move = 0;
+    int x;
+    int y;
+
+    public int getThreat() {
+        return threat;
+    }
+
+    public void setThreat(int threat) {
+        this.threat = threat;
+    }
+
+    int threat = 0;
 
     Node(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    Node(Node node) {
+        this.x = node.x;
+        this.y = node.y;
+        this.move = node.move;
+        this.threat = node.threat;
     }
 
     int rightDiagonalRowIndex() {

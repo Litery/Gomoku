@@ -1,5 +1,6 @@
 package minmax;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class MinMax {
@@ -61,13 +62,13 @@ class MinMax {
                 bestValue = result;
                 bestMove = node;
             }
-            if (System.currentTimeMillis() - start_time > max_search_time) break;
+           // if (System.currentTimeMillis() - start_time > max_search_time) break;
         }
 //        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
+        System.out.println((System.currentTimeMillis() - start_time)  + " " +  min_max_calls);
+        System.out.println( min_max_calls / (System.currentTimeMillis() - start_time));
         return bestMove;
     }
-
-
 
     private int negaMax(Node move, int depth, int player) {
         problem.move(move);
@@ -97,9 +98,12 @@ class MinMax {
             problem.back(move);
             return (Integer.MIN_VALUE + 1);
         }
+        ArrayList<Node> oldThreats = problem.evaluateThreats(move);
         if (depth == 0) {
+            int result = -problem.heuristicValue(player);
             problem.back(move);
-            return -problem.heuristicValue(player);
+            problem.backThreats(oldThreats);
+            return result;
         }
         int bestValue = Integer.MIN_VALUE, result = 0;
         for (Node node : problem.getMoves()) {
@@ -110,6 +114,7 @@ class MinMax {
                 break;
         }
         problem.back(move);
+        problem.backThreats(oldThreats);
         return bestValue;
     }
 
