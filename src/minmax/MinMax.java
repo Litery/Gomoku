@@ -64,6 +64,8 @@ class MinMax {
             if (System.currentTimeMillis() - start_time > max_search_time) break;
         }
 //        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
+        System.out.println((System.currentTimeMillis() - start_time));
+        System.out.println( min_max_calls / (System.currentTimeMillis() - start_time));
         return bestMove;
     }
 
