@@ -151,6 +151,7 @@ public class Gomoku {
     }
 
     List<Node> getMoves() {
+//        return expanded.stream().filter(node -> node.move == NO_MOVE).collect(Collectors.toList());
         List<Node> moves = expanded
                 .stream()
                 .filter(node -> node.move != NO_MOVE)
