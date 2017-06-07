@@ -18,7 +18,7 @@ class MinMax {
     }
 
     MinMax(Gomoku problem, int depth, boolean alpha_beta) {
-        this(problem, depth, alpha_beta, 1000);
+        this(problem, depth, alpha_beta, 2000);
     }
 
     MinMax(Gomoku problem, int depth, boolean alpha_beta, long max_search_time) {
@@ -48,6 +48,7 @@ class MinMax {
             }
             if (System.currentTimeMillis() - start_time > max_search_time) break;
         }
+//        System.out.println((System.currentTimeMillis() - start_time));
         return bestMove;
     }
 

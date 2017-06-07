@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Gomoku {
-    private Node[][][] board = new Node[4][][];
+    protected Node[][][] board = new Node[4][][];
     private List<Node> expanded;
     private boolean whitePlayer = true;
 
@@ -89,7 +89,7 @@ public class Gomoku {
         return 0;
     }
 
-    private int[] heuristicValues(int player) {
+    protected int[] heuristicValues(int player) {
         int[][] players = {{WHITE, 0}, {BLACK, 0}};
         for (int[] color : players) {
             for (Node[][] board : board) {
@@ -105,12 +105,12 @@ public class Gomoku {
         return new int[]{players[0][1], players[1][1]};
     }
 
-    int heuristicValue(int player) {
+    protected int heuristicValue(int player) {
         int[] values = heuristicValues(player);
         return (player == WHITE) ? ((values[0]) - (values[1])) : ((values[1]) - (values[0]));
     }
 
-    private int checkForward(Node[] row, int[] color, int index) {
+    protected int checkForward(Node[] row, int[] color, int index) {
         int result = 0, counter = -1;
         for (int i = index; i >= 0 && i < index + WIN_LENGTH && i < row.length; i++) {
             if (row[i].move == color[0]) {
