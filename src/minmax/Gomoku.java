@@ -3,6 +3,7 @@ package minmax;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -113,7 +114,7 @@ public class Gomoku {
 
     private int checkThreat(Node[] row, int index) {
         int result = 0, black = 0, white = 0;
-        for (int i = index; i < Gomoku.WIN_LENGTH; i++) {
+        for (int i = index; i < index + Gomoku.WIN_LENGTH; i++) {
             if (row[i].move == WHITE)
                 white++;
             else if (row[i].move == BLACK)
@@ -123,7 +124,7 @@ public class Gomoku {
         }
         if (white > 2) {
             result = white;
-        } else if (black < 2) {
+        } else if (black < -2) {
             result = black;
         }
         return result;
@@ -133,13 +134,13 @@ public class Gomoku {
         int diagonalIndex = 0;
         ArrayList<Node[]> result = new ArrayList<>();
         result.add(board[0][node.x]);
-        result.add(board[3][node.y]);
         diagonalIndex = node.rightDiagonalRowIndex();
         if (diagonalIndex > 0 && diagonalIndex < board[1].length)
             result.add(board[1][diagonalIndex]);
         diagonalIndex = node.leftDiagonalRowIndex();
         if (diagonalIndex > 0 && diagonalIndex < board[2].length)
             result.add(board[2][diagonalIndex]);
+        result.add(board[3][node.y]);
         return result;
     }
 
@@ -157,7 +158,7 @@ public class Gomoku {
         whitePlayer = !whitePlayer;
     }
 
-    List<Node> getMoves() {
+    List<Node> getMoves(int player) {
         List<Node> moves = expanded
                 .stream()
                 .filter(node -> node.move != NO_MOVE)
@@ -165,8 +166,18 @@ public class Gomoku {
         List<Node> result =  expanded.stream()
                 .filter(node -> node.move == NO_MOVE)
                 .filter(node -> moves.stream().anyMatch(node::isInCircle))
+//                .sorted(Comparator.comparing(node -> rateMove(node, player)))
                 .collect(Collectors.toList());
         Collections.shuffle(result);
+        return result;
+    }
+
+    int rateMove(Node node, int player) {
+        move(node);
+        ArrayList<Node> old = evaluateThreats(node);
+        int result = heuristicValue(player);
+        back(node);
+        backThreats(old);
         return result;
     }
 

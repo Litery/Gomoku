@@ -15,7 +15,7 @@ class MinMax {
     }
 
     MinMax(Gomoku problem) {
-        this(problem, 4,true);
+        this(problem, 4, true);
     }
 
     MinMax(Gomoku problem, int depth, boolean alpha_beta) {
@@ -41,14 +41,18 @@ class MinMax {
         int bestValue = Integer.MIN_VALUE, result;
         Node bestMove = null;
         long start_time = System.currentTimeMillis();
-        for (Node node : problem.getMoves()) {
+        for (Node node : problem.getMoves(player)) {
             result = -negaMax(node, depth - 1, player);
+//            System.out.println(node.x + " " + node.y + " " + result);
             if (result > bestValue) {
                 bestValue = result;
                 bestMove = node;
             }
-            if (System.currentTimeMillis() - start_time > max_search_time) break;
+            // if (System.currentTimeMillis() - start_time > max_search_time) break;
         }
+//        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
+//        System.out.println((System.currentTimeMillis() - start_time)  + " " +  min_max_calls);
+        System.out.println( min_max_calls / (System.currentTimeMillis() - start_time));
         return bestMove;
     }
 
@@ -56,16 +60,17 @@ class MinMax {
         int bestValue = Integer.MIN_VALUE, result;
         Node bestMove = null;
         long start_time = System.currentTimeMillis();
-        for (Node node : problem.getMoves()) {
+        for (Node node : problem.getMoves(player)) {
             result = -negaMax(node, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, player);
+//            System.out.println(node.x + " " + node.y + " " + result);
             if (result > bestValue) {
                 bestValue = result;
                 bestMove = node;
             }
-           // if (System.currentTimeMillis() - start_time > max_search_time) break;
+            // if (System.currentTimeMillis() - start_time > max_search_time) break;
         }
 //        System.out.println("\n" + bestMove.x + " " + bestMove.y + " " + bestValue);
-        System.out.println((System.currentTimeMillis() - start_time)  + " " +  min_max_calls);
+//        System.out.println((System.currentTimeMillis() - start_time)  + " " +  min_max_calls);
         System.out.println( min_max_calls / (System.currentTimeMillis() - start_time));
         return bestMove;
     }
@@ -76,17 +81,22 @@ class MinMax {
         int winningPlayer = problem.getWinningPlayer(move);
         if (winningPlayer != 0) {
             problem.back(move);
-            return (Integer.MIN_VALUE + 1) * player;
+            return (Integer.MIN_VALUE + 1);
         }
+        ArrayList<Node> oldThreats = problem.evaluateThreats(move);
         if (depth == 0) {
+            int result = -problem.heuristicValue(player);
             problem.back(move);
-            return -problem.heuristicValue(player);
+            problem.backThreats(oldThreats);
+            return result;
         }
-        int bestValue = Integer.MIN_VALUE;
-        for (Node node : problem.getMoves()) {
-            bestValue = Integer.max(bestValue, -negaMax(node, depth - 1, -player));
+        int bestValue = Integer.MIN_VALUE, result = 0;
+        for (Node node : problem.getMoves(player)) {
+            result = -negaMax(node, depth - 1, -player);
+            bestValue = Integer.max(bestValue, result);
         }
         problem.back(move);
+        problem.backThreats(oldThreats);
         return bestValue;
     }
 
@@ -106,7 +116,7 @@ class MinMax {
             return result;
         }
         int bestValue = Integer.MIN_VALUE, result = 0;
-        for (Node node : problem.getMoves()) {
+        for (Node node : problem.getMoves(player)) {
             result = -negaMax(node, depth - 1, -beta, -alfa, -player);
             bestValue = Integer.max(bestValue, result);
             alfa = Integer.max(alfa, result);
